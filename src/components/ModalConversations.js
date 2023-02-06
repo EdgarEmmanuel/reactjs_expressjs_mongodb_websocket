@@ -32,8 +32,8 @@ function ModalConversations({id, setCloseConversationModal}){
 
     return (
         <div>
-            <Modal.Dialog onHide={close}>
-                <Modal.Header closeButton>
+            <Modal.Dialog >
+                <Modal.Header closeButton onClick={close}>
                     <Modal.Title>New Conversation</Modal.Title>
                 </Modal.Header>
 

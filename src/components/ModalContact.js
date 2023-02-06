@@ -2,7 +2,7 @@ import { Button, Modal,Form } from "react-bootstrap";
 import {useRef} from 'react';
 import { UseContacts } from '../contexts/ContactsContextProvider';
 
-function ModalContact({id}){
+function ModalContact({id, setCloseContactModal}){
     const nameContact = useRef();
     const numberOfTheContact = useRef();
     const {createContact} = UseContacts();
@@ -19,7 +19,7 @@ function ModalContact({id}){
     }
     return (
         <Modal.Dialog>
-                <Modal.Header closeButton>
+                <Modal.Header closeButton onClick={() => setCloseContactModal(false)}>
                     <Modal.Title>Add New Contact</Modal.Title>
                 </Modal.Header>
 

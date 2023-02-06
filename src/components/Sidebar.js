@@ -49,8 +49,7 @@ function Sidebar({id}){
             <Tab.Container activeKey={activeKey}>
                 <Nav variant="tabs" className="justify-content-center">
                     <Nav.Item>
-                        <Nav.Link onClick={changeActive}
-                        eventKey={env.getConversationsKey()}>
+                        <Nav.Link onClick={changeActive} eventKey={env.getConversationsKey()}>
                             Conversations
                         </Nav.Link>
                     </Nav.Item>
@@ -79,7 +78,7 @@ function Sidebar({id}){
             {openModalConv && <ModalConversations id={id} setCloseConversationModal={setOpenModalConv}/>}
 
             {/* open the modal for the contacts  */}
-            {openModalCont && <ModalContact id={id}/>}
+            {openModalCont && <ModalContact id={id} setCloseContactModal={setOpenModalCont}/>}
         </div>
     )
 }
