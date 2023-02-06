@@ -3,7 +3,7 @@ import { Button, Form, Modal } from "react-bootstrap";
 import {UseContacts} from '../contexts/ContactsContextProvider';
 import {useConversations} from '../contexts/ConversationContextProvider';
 
-function ModalConversations({id}){
+function ModalConversations({id, setCloseConversationModal}){
     const {contacts} = UseContacts()
     const {conversations,createConversation} = useConversations();
     const [selectedContacts,setSelectedContacts] = useState([]);
@@ -27,17 +27,20 @@ function ModalConversations({id}){
         e.preventDefault();
         createConversation(selectedContacts);
     }
+
+    const close = () => setCloseConversationModal(false);
+
     return (
         <div>
-            <Modal.Dialog>
+            <Modal.Dialog onHide={close}>
                 <Modal.Header closeButton>
                     <Modal.Title>New Conversation</Modal.Title>
                 </Modal.Header>
 
                 <Form onSubmit={handleSubmit}>
-                    {contacts.map(contact=>
+                    {contacts[0].data.map(contact=>
                         <Form.Check
-                            type="checkbox" 
+                            type="checkbox"
                             value={valueOfTheCheckBox(contact.number)}
                             key={contact._id}
                             onChange={()=>handleCheckBoxChange(contact.number)}
@@ -45,7 +48,7 @@ function ModalConversations({id}){
                         </Form.Check>
                     )}
                     <Button variant="primary" type="submit">
-                        Create 
+                        Create
                     </Button>
                 </Form>
             </Modal.Dialog>

@@ -21,6 +21,8 @@ function Sidebar({id}){
         let menuActive = e.target.getAttribute("data-rb-event-key");
 
         // show the active menu to the user
+        setOpenModalConv(false);
+        setOpenModalCont(false);
         setActiveKey(menuActive);
     }
 
@@ -28,11 +30,11 @@ function Sidebar({id}){
         e.preventDefault();
         switch(activeKey){
             case env.getConversationsKey():
-                setOpenModalConv(!openModalConv);
                 setOpenModalCont(false);
+                setOpenModalConv(true);
             break;
             case env.getContactsKey():
-                setOpenModalCont(!openModalCont);
+                setOpenModalCont(true);
                 setOpenModalConv(false);
             break;
             default:
@@ -74,7 +76,7 @@ function Sidebar({id}){
                 </Button>
             </Tab.Container>
             {/* open the modal for the conversations */}
-            {openModalConv && <ModalConversations id={id}/>}
+            {openModalConv && <ModalConversations id={id} setCloseConversationModal={setOpenModalConv}/>}
 
             {/* open the modal for the contacts  */}
             {openModalCont && <ModalContact id={id}/>}
