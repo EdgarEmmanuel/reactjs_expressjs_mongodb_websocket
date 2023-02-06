@@ -5,13 +5,15 @@ import Conversations from './Conversations';
 import Contacts from './Contacts';
 import ModalContact from './ModalContact';
 import ModalConversations from './ModalConversations';
+import UseLocalStorage from "../hooks/useLocalStorage";
 
-function Sidebar({id}){
+function Sidebar({identifier}){
     const env = new Env();
 
     const [activeKey,setActiveKey] = useState(env.getConversationsKey());
     const conversationOpen = activeKey === env.getConversationsKey();
     const [openModalConv,setOpenModalConv] = useState(false);
+    const [id,setId] = UseLocalStorage('id');
     const [openModalCont,setOpenModalCont] = useState(false);
 
     function changeActive(e){
@@ -44,6 +46,11 @@ function Sidebar({id}){
         }
     }
 
+    const logout = () => {
+        setId(null);
+        window.location.reload();
+    }
+
     return (
         <div style={{width:'270px'}} className="d-flex flex-column">
             <Tab.Container activeKey={activeKey}>
@@ -58,6 +65,11 @@ function Sidebar({id}){
                             Contacts
                         </Nav.Link>
                     </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link onClick={changeActive} eventKey={env.getSettingsKey()}>
+                            Parametres
+                        </Nav.Link>
+                    </Nav.Item>
                 </Nav>
                 <Tab.Content className="border-right overflow-auto flex-grow-1">
                     <Tab.Pane eventKey={env.getConversationsKey()}>
@@ -65,6 +77,11 @@ function Sidebar({id}){
                     </Tab.Pane>
                     <Tab.Pane eventKey={env.getContactsKey()}>
                         <Contacts/>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey={env.getSettingsKey()}>
+                        <button onClick={logout}>
+                            Deconnexion
+                        </button>
                     </Tab.Pane>
                 </Tab.Content>
                 <div>
