@@ -28,6 +28,7 @@ function Login({onIdSubmit}){
                 'login':loginRef.current.value,
                 'password':passwordRef.current.value
             }).then((data)=>{
+                console.log(data.data)
                 if(data.data !== undefined && data.data.length > 0){
                     // send the connected user id to the parent component
                     onIdSubmit(data.data[0].numero);
