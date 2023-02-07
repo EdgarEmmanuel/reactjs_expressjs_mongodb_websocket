@@ -38,7 +38,7 @@ function ModalConversations({id, setCloseConversationModal}){
                 </Modal.Header>
 
                 <Form onSubmit={handleSubmit}>
-                    {contacts[0].data.map(contact=>
+                    {contacts.length > 0 && contacts[0] !== undefined && contacts[0].data.map(contact=>
                         <Form.Check
                             type="checkbox"
                             value={valueOfTheCheckBox(contact.number)}

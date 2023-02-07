@@ -11,38 +11,25 @@ export default function OpenConversation(){
     const setRef = useCallback((node)=>{
         if(node) node.scrollIntoView({ smooth : true });
     },[])
-    const {sendMessages,conversations,selectedConversation} = useConversations();
-    
+    const {sendMessage,conversations,selectedConversation} = useConversations();
+
     async function handleSubmit(e){
         e.preventDefault();
 
         let currentDate = `${new Date().getDay()}/${new Date().getMonth()}/${new Date().getFullYear()}==${new Date().toLocaleTimeString()}`;
         // console.log(conversations);
-        console.table(selectedConversation.messages);
+        console.log(selectedConversation.messages);
 
-        await axios.post("/saveMessages",{
+        sendMessage(
+            selectedConversation.recipients.map(r=>r.id),
+            text
+        );
 
-                messages:selectedConversation.messages,
-                receivers:selectedConversation.selectedIds,
-                owner:"+221787656454"
-
-        }).then(async (data)=>{
-            console.log(data);
-        }).catch((err)=>{
-            throw err;
-        })
-
-        // sendMessages(
-        //     selectedConversation.selectedIds.map(r=>r.number),
-        //     text,
-        //     currentDate
-        // );
-
-        //clear the field 
+        //clear the field
         setText("");
     }
 
-    // get the index of the last message 
+    // get the index of the last message
     const lastMessage = selectedConversation.messages.length - 1;
     return (
         <div className="d-flex flex-column flex-grow-1">
@@ -50,10 +37,10 @@ export default function OpenConversation(){
                 <div className="d-flex flex-column align-items-start justify-content-end px-3 overflow-scroll">
 
                     {selectedConversation.messages.map((message,index)=>(
-                        
-                        <div 
+
+                        <div
                         ref = { (lastMessage===index) ? setRef : null}
-                        key={index} 
+                        key={index}
                         className={`my-1 d-flex flex-column ${message.fromMe ? 'align-self-end' : ''}`}>
                             <div className={
                                     `rounded px-2 py-1 ${message.fromMe ? 'bg-primary text-white' :'bg-success' }`}>
@@ -69,11 +56,11 @@ export default function OpenConversation(){
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="m-2">
                     <InputGroup>
-                        <Form.Control 
-                        as="textarea" 
-                        required 
+                        <Form.Control
+                        as="textarea"
+                        required
                         value={text}
-                        onChange={ e => setText(e.target.value)} 
+                        onChange={ e => setText(e.target.value)}
                         style={{height:'75px',resize:'none'}}
                         />
                         <InputGroup.Append>

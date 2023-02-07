@@ -1,9 +1,14 @@
 import {useConversations} from '../contexts/ConversationContextProvider';
 import { ListGroup } from 'react-bootstrap';
+import {useEffect} from "react";
 
 function Conversations(){
     const {conversations,selectConversationIndex} = useConversations();
-    
+
+    useEffect(() => {
+       console.log(conversations);
+    },[])
+
     return (
         <div className="conversations">
             <ListGroup>
@@ -11,10 +16,10 @@ function Conversations(){
                 {conversations.map((conversation,index)=>(
                     <ListGroup.Item key={index}
                         onClick={()=>selectConversationIndex(index)}
-                        action 
-                        active={conversations.selected}
+                        action
+                        active={conversation.selected}
                     >
-                        {conversation.selectedIds.map((receiver)=>(receiver.name)).join(" , ")}
+                        {conversation.recipients.map((receiver)=>(receiver.name)).join(" , ")}
                     </ListGroup.Item>
                 ))}
             </ListGroup>

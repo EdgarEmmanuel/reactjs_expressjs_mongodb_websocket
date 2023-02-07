@@ -23,41 +23,41 @@ export function ConversationContextProvider({id,children}){
 
     /**
      * funtion to create one conversation
-     * @param {*} selectedIds
+     * @param {*} recipients
      */
-    function createConversation(selectedIds){
+    function createConversation(recipients){
         setConversations(prevConversations=>{
-            return [...prevConversations,{selectedIds,messages:[]}]
+            return [...prevConversations,{recipients,messages:[]}]
         })
     }
 
-    const addMessageToSelectedConversation = useCallback(({receivers,text,sender,hour}) => {
+    const addMessageToSelectedConversation = useCallback(({recipients,text,sender}) => {
         setConversations(prevConversations=>{
             let madeChange = false;
-            const newMessage = {sender,text,hour};
+            const newMessage = {sender,text};
             const newConversation = prevConversations.map(
                 conversation => {
-                    if(env.arrayEquality(conversation.selectedIds,receivers)){
+                    if(env.arrayEquality(conversation.recipients,recipients)){
                             madeChange = true;
-                            return {...conversation,
-                                selectedIds:receivers,
-                                messages:[...conversation.messages,newMessage]
+                            return {
+                                ...conversation,
+                                //selectedIds:receivers,
+                                messages:[ ...conversation.messages, newMessage ]
                             }
                     }
                     return conversation;
                 }
             )
-
             if(madeChange){
                 return newConversation;
             }else{
                 return [
                     ...prevConversations,
-                    {selectedIds:receivers,messages:[newMessage]}
+                    {recipients ,messages:[newMessage]}
                 ]
             }
         })
-    },[env,setConversations])
+    },[setConversations])
 
     useEffect(()=>{
         // verfiy if the socket is instantiated
@@ -66,19 +66,19 @@ export function ConversationContextProvider({id,children}){
         socket.on("receive-message",addMessageToSelectedConversation);
 
         // we remove the event
-        return ()=>socket.off("receive-message");
+        return () => socket.off("receive-message");
     },[socket,addMessageToSelectedConversation])
 
-    function sendMessages(receiver_ids,message,hour){
+    function sendMessage(receivers,text){
         // send messages to everyone else
-        socket.emit('send-message',{receivers:receiver_ids,text:message})
-        addMessageToSelectedConversation({receivers:receiver_ids,text:message,sender:id,hour:hour})
+        socket.emit('send-message',{receivers,text})
+        addMessageToSelectedConversation({recipients:receivers,text,sender:id})
     }
 
 
     const formattedConversations = conversations.map((conversation,index)=>{
         // we loop through each id to find the name of the id
-        const receivers = conversation.selectedIds.map((receiverId)=>{
+        const receivers = conversation.recipients.map((receiverId)=>{
             // inside the contacts array we do a comparison to
             // find the name of the id
             const contact = contacts.find(contact => {
@@ -88,7 +88,7 @@ export function ConversationContextProvider({id,children}){
             const name = (contact && contact.name) || receiverId;
 
             //we push the contact to the array of receivers
-            return {...contact};
+            return {id: receiverId, name};
         })
 
 
@@ -104,14 +104,15 @@ export function ConversationContextProvider({id,children}){
         })
         //if the conversation is the conversation selected
         const selected = index === selectConversationIndex;
+
         //we push the receivers in the conversation array
-        return {...conversation,selectedIds:receivers,selected,messages}
+        return { ...conversation, recipients:receivers, selected, messages }
     })
 
 
     const newConversations ={
         conversations:formattedConversations,
-        sendMessages,
+        sendMessage,
 
         // get the messages of the selected conversation
         selectedConversation : formattedConversations[selectConversationIndex],
