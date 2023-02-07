@@ -12,7 +12,7 @@ function Contacts(){
     return (
         <ListGroup>
             <h1>Contacts</h1>
-            {contacts[0] !== undefined && contacts[0].data.map((contact,id) =>
+            {contacts.length > 0 && contacts[0] !== undefined && contacts[0].data.map((contact,id) =>
                 <ListGroup.Item key={id}>
                     {contact.name}
                     <h6>

@@ -16,10 +16,12 @@ export function ContactsContextProvider({id,children}){
         const { data } = await axios.post("/contacts",{
             "user":id
         });
-        setContacts(prevContacts=>{
-            //return [...prevContacts,{data:data.contacts}];
-            return [{data:data.contacts}];
-        })
+        if(data.success){
+            setContacts(prevContacts=>{
+                //return [...prevContacts,{data:data.contacts}];
+                return [{data:data.contacts}];
+            })
+        }
     }
 
     useEffect(()=>{
