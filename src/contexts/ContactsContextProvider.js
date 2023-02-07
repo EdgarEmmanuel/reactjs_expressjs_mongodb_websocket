@@ -17,7 +17,8 @@ export function ContactsContextProvider({id,children}){
             "user":id
         });
         setContacts(prevContacts=>{
-            return [...prevContacts,{data:data.contacts}];
+            //return [...prevContacts,{data:data.contacts}];
+            return [{data:data.contacts}];
         })
     }
 
@@ -38,7 +39,8 @@ export function ContactsContextProvider({id,children}){
                     if(data.data.success){
                         //setContacts(data.data.contacts);
                         setContacts(prevContacts=>{
-                            return [...prevContacts,{data:data.data.contacts}];
+                            //return [...prevContacts,{data:data.data.contacts}];
+                            return [{data:data.data.contacts}];
                         })
                     }else{
                         setContacts([]);
