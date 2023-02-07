@@ -7,8 +7,8 @@ function UseLocalStorage(key,initialValue){
     const prefixedKey = env.getPrefix()+key;
 
     const [value,setValue] = useState(()=>{
-        const jsonValue = localStorage.getItem(prefixedKey);
-        if(jsonValue !== null) return JSON.parse(jsonValue) ;
+        const jsonValue = localStorage.getItem(prefixedKey) ;
+        if(jsonValue != null) return JSON.parse(jsonValue) ;
         if(typeof initialValue === 'function'){
             return initialValue()
         }else{

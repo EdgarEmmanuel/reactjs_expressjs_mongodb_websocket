@@ -10,13 +10,13 @@ import {useState} from "react";
 
 function App() {
   let env = new Env();
-  const [id,setId] = UseLocalStorage('id');
+  const [id,setId] = UseLocalStorage('id', null);
   //const [id,setId] = useState(localStorage.getItem('id'));
   const DASH = (
     <SocketProvider id={id}>
       <ContactsContextProvider id={id}>
         <ConversationContextProvider id={id}>
-          <Dashboard id={id} />
+          <Dashboard id={id} setId={setId}/>
         </ConversationContextProvider>
       </ContactsContextProvider>
     </SocketProvider>

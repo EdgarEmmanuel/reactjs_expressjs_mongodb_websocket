@@ -7,7 +7,7 @@ import ModalContact from './ModalContact';
 import ModalConversations from './ModalConversations';
 import UseLocalStorage from "../hooks/useLocalStorage";
 
-function Sidebar({phone_number}){
+function Sidebar({phone_number, setIdData}){
     const env = new Env();
 
     const [activeKey,setActiveKey] = useState(env.getConversationsKey());
@@ -47,7 +47,7 @@ function Sidebar({phone_number}){
     }
 
     const logout = () => {
-        setId(null);
+        setIdData(null);
         window.location.reload();
     }
 
