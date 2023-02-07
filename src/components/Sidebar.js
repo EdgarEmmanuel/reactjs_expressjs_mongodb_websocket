@@ -7,7 +7,7 @@ import ModalContact from './ModalContact';
 import ModalConversations from './ModalConversations';
 import UseLocalStorage from "../hooks/useLocalStorage";
 
-function Sidebar({identifier}){
+function Sidebar({phone_number}){
     const env = new Env();
 
     const [activeKey,setActiveKey] = useState(env.getConversationsKey());
@@ -79,13 +79,11 @@ function Sidebar({identifier}){
                         <Contacts/>
                     </Tab.Pane>
                     <Tab.Pane eventKey={env.getSettingsKey()}>
-                        <button onClick={logout}>
-                            Deconnexion
-                        </button>
+                        <Button onClick={logout} variant="info">Deconnexion</Button>
                     </Tab.Pane>
                 </Tab.Content>
                 <div>
-                    Your Phone Number : <span className="text-muted">{id}</span>
+                    Your Phone Number : <span className="text-muted">{phone_number}</span>
                 </div>
                 <Button onClick={openModel}>
                     New { conversationOpen ? env.getConversationsKey(): env.getContactsKey() }
