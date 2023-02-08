@@ -16,7 +16,7 @@ export function ConversationContextProvider({id,children}){
 
     const env = new Env();
 
-    const [conversations,setConversations]=UseLocalStorage('conversations',[]);
+    const [conversations,setConversations] = UseLocalStorage('conversations',[]);
     const [selectConversationIndex,setSelectConversationIndex] = useState(0);
     const {contacts} = UseContacts();
     const socket = useSocket();
@@ -32,7 +32,7 @@ export function ConversationContextProvider({id,children}){
     }
 
     const addMessageToSelectedConversation = useCallback(({recipients,text,sender}) => {
-        setConversations(prevConversations=>{
+        setConversations(prevConversations => {
             let madeChange = false;
             const newMessage = {sender,text};
             const newConversation = prevConversations.map(
@@ -41,15 +41,15 @@ export function ConversationContextProvider({id,children}){
                             madeChange = true;
                             return {
                                 ...conversation,
-                                //selectedIds:receivers,
                                 messages:[ ...conversation.messages, newMessage ]
                             }
+                    } else {
+                        return conversation;
                     }
-                    return conversation;
                 }
-            )
+            );
             if(madeChange){
-                return newConversation;
+                return newConversation ;
             }else{
                 return [
                     ...prevConversations,
@@ -57,7 +57,7 @@ export function ConversationContextProvider({id,children}){
                 ]
             }
         })
-    },[setConversations])
+    },[conversations])
 
     useEffect(()=>{
         // verfiy if the socket is instantiated
@@ -71,8 +71,18 @@ export function ConversationContextProvider({id,children}){
 
     function sendMessage(receivers,text){
         // send messages to everyone else
-        socket.emit('send-message',{receivers,text, conversations: conversations})
-        addMessageToSelectedConversation({recipients:receivers,text,sender:id})
+        let receivers_final = formattedConversations[selectConversationIndex].recipients;
+
+        socket.emit('send-message',
+            {
+                receivers,
+                text,
+                receivers_final,
+                conversations: formattedConversations
+            }
+        );
+
+        addMessageToSelectedConversation({recipients:receivers,text,sender:id}) ;
     }
 
 

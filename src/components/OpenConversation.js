@@ -18,7 +18,7 @@ export default function OpenConversation(){
 
         let currentDate = `${new Date().getDay()}/${new Date().getMonth()}/${new Date().getFullYear()}==${new Date().toLocaleTimeString()}`;
         // console.log(conversations);
-        console.log(selectedConversation.messages);
+        //console.log(selectedConversation.messages);
 
         sendMessage(
             selectedConversation.recipients.map(r=>r.id),
