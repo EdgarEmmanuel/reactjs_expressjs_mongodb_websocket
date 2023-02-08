@@ -18,6 +18,7 @@ export function ConversationContextProvider({id,children}){
 
     const [conversations,setConversations] = UseLocalStorage('conversations',[]);
     const [selectConversationIndex,setSelectConversationIndex] = useState(0);
+    const [chatId, setChatId] = UseLocalStorage('chatId', null);
     const {contacts} = UseContacts();
     const socket = useSocket();
 
@@ -31,7 +32,9 @@ export function ConversationContextProvider({id,children}){
         })
     }
 
-    const addMessageToSelectedConversation = useCallback(({recipients,text,sender}) => {
+    const addMessageToSelectedConversation = useCallback(({ recipients, text, sender, chat_identifier}) => {
+        setChatId(chat_identifier);
+
         setConversations(prevConversations => {
             let madeChange = false;
             const newMessage = {sender,text};
@@ -57,7 +60,7 @@ export function ConversationContextProvider({id,children}){
                 ]
             }
         })
-    },[conversations])
+    },[conversations, chatId])
 
     useEffect(()=>{
         // verfiy if the socket is instantiated
@@ -77,12 +80,11 @@ export function ConversationContextProvider({id,children}){
             {
                 receivers,
                 text,
-                receivers_final,
-                conversations: formattedConversations
+                chat_identifier: chatId
             }
         );
 
-        addMessageToSelectedConversation({recipients:receivers,text,sender:id}) ;
+        addMessageToSelectedConversation({recipients:receivers,text,sender:id, chat_identifier: chatId}) ;
     }
 
 
