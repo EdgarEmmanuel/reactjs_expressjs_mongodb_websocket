@@ -71,7 +71,7 @@ export function ConversationContextProvider({id,children}){
 
     function sendMessage(receivers,text){
         // send messages to everyone else
-        socket.emit('send-message',{receivers,text})
+        socket.emit('send-message',{receivers,text, conversations: conversations})
         addMessageToSelectedConversation({recipients:receivers,text,sender:id})
     }
 
