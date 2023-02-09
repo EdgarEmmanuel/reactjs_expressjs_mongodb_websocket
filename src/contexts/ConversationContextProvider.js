@@ -1,8 +1,9 @@
 import React , {useContext, useEffect, useState,useCallback} from 'react';
 import UseLocalStorage from '../hooks/useLocalStorage';
-import {UseContacts} from '../contexts/ContactsContextProvider';
+import {UseContacts} from './ContactsContextProvider';
 import { useSocket } from './SocketProvider';
 import Env from '../helpers/env';
+import axios from "axios";
 
 
 const conversationContext = React.createContext();
@@ -22,6 +23,26 @@ export function ConversationContextProvider({id,children}){
     const {contacts} = UseContacts();
     const socket = useSocket();
 
+
+
+
+    const getConversationsOfUser = async () => {
+        const { data } = await axios.post("/conversations",{
+            "user" : id
+        });
+
+        setConversations(prevConversations=>{
+            return data;
+        });
+    }
+
+    useEffect(()=>{
+        getConversationsOfUser();
+    },[id]);
+
+
+
+
     /**
      * funtion to create one conversation
      * @param {*} recipients
@@ -32,35 +53,46 @@ export function ConversationContextProvider({id,children}){
         })
     }
 
-    const addMessageToSelectedConversation = useCallback(({ recipients, text, sender, chat_identifier}) => {
-        setChatId(chat_identifier);
 
-        setConversations(prevConversations => {
-            let madeChange = false;
-            const newMessage = {sender,text};
-            const newConversation = prevConversations.map(
-                conversation => {
-                    if(env.arrayEquality(conversation.recipients,recipients)){
+    const addMessageToSelectedConversation = useCallback(async ({ recipients, text, sender, chat_identifier }) => {
+            setChatId(chat_identifier);
+
+        await getConversationsOfUser();
+
+          /*
+            setConversations(prevConversations => {
+
+                let madeChange = false;
+                const newMessage = {sender,text};
+                const newConversation = prevConversations.map(
+                    conversation => {
+                        if(env.arrayEquality(conversation.recipients,recipients)){
                             madeChange = true;
                             return {
                                 ...conversation,
                                 messages:[ ...conversation.messages, newMessage ]
                             }
-                    } else {
-                        return conversation;
+                        } else {
+                            return conversation;
+                        }
                     }
+                );
+                if(madeChange){
+                    return newConversation ;
+                }else{
+                    return [
+                        ...prevConversations,
+                        {recipients ,messages:[newMessage]}
+                    ]
                 }
-            );
-            if(madeChange){
-                return newConversation ;
-            }else{
-                return [
-                    ...prevConversations,
-                    {recipients ,messages:[newMessage]}
-                ]
-            }
-        })
+            });
+
+           */
+
+
     },[conversations, chatId])
+
+
 
     useEffect(()=>{
         // verfiy if the socket is instantiated
@@ -72,20 +104,28 @@ export function ConversationContextProvider({id,children}){
         return () => socket.off("receive-message");
     },[socket,addMessageToSelectedConversation])
 
-    function sendMessage(receivers,text){
-        // send messages to everyone else
-        let receivers_final = formattedConversations[selectConversationIndex].recipients;
+
+
+
+
+
+    async function sendMessage(receivers,text){
+
+        const chat = formattedConversations[selectConversationIndex].chat_identifier || null;
 
         socket.emit('send-message',
             {
                 receivers,
                 text,
-                chat_identifier: chatId
+                chat_identifier: chat
             }
         );
 
-        addMessageToSelectedConversation({recipients:receivers,text,sender:id, chat_identifier: chatId}) ;
+        await addMessageToSelectedConversation({recipients: receivers, text, sender: id, chat_identifier: chat}) ;
     }
+
+
+
 
 
     const formattedConversations = conversations.map((conversation,index)=>{
@@ -131,6 +171,7 @@ export function ConversationContextProvider({id,children}){
 
         //index of the selected conversation
         selectConversationIndex:setSelectConversationIndex,
+        selectChatId: setChatId,
         createConversation
     }
 

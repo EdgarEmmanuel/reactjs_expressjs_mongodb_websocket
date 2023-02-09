@@ -3,23 +3,31 @@ import { ListGroup } from 'react-bootstrap';
 import {useEffect} from "react";
 
 function Conversations(){
-    const {conversations,selectConversationIndex} = useConversations();
+    const {conversations,selectConversationIndex, selectChatId} = useConversations();
 
-    useEffect(() => {
-       console.log(conversations);
-    },[])
+    // useEffect(() => {
+    //    console.log(conversations);
+    // },[])
+
+    const findTheChatId = (conversation) => {
+        selectChatId(conversation.chat_identifier);
+    }
 
     return (
         <div className="conversations">
             <ListGroup>
-                <h1>Receiver</h1>
-                {conversations.map((conversation,index)=>(
+                <h1>Conversations</h1>
+                {conversations.length > 0 && conversations.map((conversation,index)=>(
                     <ListGroup.Item key={index}
-                        onClick={()=>selectConversationIndex(index)}
+                        onClick={()=>{
+                            selectConversationIndex(index);
+                            findTheChatId(conversation)
+                        }}
                         action
                         active={conversation.selected}
                     >
-                        {conversation.recipients.map((receiver)=>(receiver.name)).join(" , ")}
+                        {/*{conversation.recipients.map((receiver)=>(receiver.name)).join(" , ")}*/}
+                        {conversation.chat_identifier}
                     </ListGroup.Item>
                 ))}
             </ListGroup>
